@@ -24,43 +24,6 @@ module.exports = function(baseOpts){
     }, function(err, res){
       if(err) return done(err)
       var data = res.body || []
-
-      
-      // make a map of _digger.path
-      var pathMap = {}
-      // make a map of path -> children
-      var childrenMap = {}
-      var rootPaths = []
-      data = data.map(function(item){
-        // give each node a proper id (based on _digger.diggerid)
-        item.id = item._digger.diggerid
-        pathMap[item._digger.inode] = item
-        childrenMap[item._digger.inode] = []
-        return item
-      })
-
-      Object.keys(pathMap || {}).forEach(function(path){
-
-        var item = pathMap[path]
-        // this is a root node
-        if(item._digger.path==opts.path){
-          rootIds.push(path)
-        }
-        else{
-          var parts = path.split('/')
-          parts.pop()
-          var parentPath = parts.join('/')
-          childrenMap[parentPath]
-        }
-        
-      })
-
-      
-      data.or
-
-      console.log('-------------------------------------------');
-      console.log(JSON.stringify(data, null, 4))
-
       done(null, data)
     })
   }

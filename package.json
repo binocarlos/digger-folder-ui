@@ -2,9 +2,9 @@
   "name": "digger-folder-ui",
   "version": "1.0.0",
   "description": "bridge between folder-ui and digger-rest",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
-    "compile": "babel -d lib/db.js src/db.js",
+    "compile": "babel -d lib src",
     "prepublish": "npm run compile"
   },
   "bin": {},

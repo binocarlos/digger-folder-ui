@@ -9,60 +9,47 @@ import Ajax from 'folder-ui/lib/db/ajax'
 
 export default function ajaxdb(opts = {}){
 
-  const loadTree = 
-  opts.mapFns = Object.assign({}, opts.mapFns, {
+  const loadTree = (data) => {
+    
+    // make a map of _digger.path and _digger.inode
+    var pathMap = {}
+    var rootNodes = []
 
+    data = data.map(function(item){
+      // give each node a proper id (based on _digger.diggerid)
+      item.id = item._digger.diggerid
+      pathMap[item._digger.path + '/' + item._digger.inode] = item
+      return item
+    })
+
+    Object.keys(pathMap || {}).forEach(function(path){
+
+      var item = pathMap[path]
+      var parts = path.split('/')
+      var inode = parts.pop()
+      var parentPath = parts.join('/')
+      var parent = pathMap[parentPath]
+
+      // it's a root node
+      if(!parent){
+        rootNodes.push(item)
+      }
+      // we have a parent
+      else{
+        var children = parent.children || []
+        children.push(item)
+        parent.children = children
+      }
+
+    })
+
+    return rootNodes
+  }
+
+  opts.mapFns = Object.assign({}, opts.mapFns, {
+    loadTree
   })
 
   return Ajax(opts)
 
-
-  return {
-    saveItem:(item, done) => {
-      
-    },
-    addItem:(parent, item, done) => {
-      console.log('-------------------------------------------');
-      console.log('ajax addItem')
-      console.dir(parent)
-      console.log(urls.addItem(opts.base, parent ? parent.id : null))
-      superagent
-        .post(urls.addItem(opts.base, parent ? parent.id : null))
-        .send(JSON.stringify(item))
-        .set('Accept', 'application/json')
-        .end((err, res) => {
-          if(res.status<500){
-            done && done(res.body)
-          }
-          else{
-            done && done(null, mapFns.addItem ? mapFns.addItem(res.body) : res.body)
-          }
-        })
-    },
-    pasteItems:(mode, parent, items, done) => {
-      
-    },
-    deleteItem:(id, done) => {
-      
-    },
-    loadItem:(id, done) => {
-      
-    },
-    loadChildren:(id, done) => {
-      
-    },
-    loadTree:(done) => {
-      superagent
-        .get(urls.loadTree(opts.base))
-        .set('Accept', 'application/json')
-        .end((err, res) => {
-          if(res.status>=400){
-            done && done(res.body)
-          }
-          else{
-            done && done(null, mapFns.loadTree ? mapFns.loadTree(res.body) : res.body)
-          }
-        })
-    }
-  }
 }
