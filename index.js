@@ -1,59 +1,39 @@
-var bhttp = require('bhttp')
+var handlers = require('./handlers')
+var routeHandlers = require('./route_handlers')
+var routes = require('./routes')
+var router = require('./router')
+var tools = require('./tools')
 
 module.exports = function(baseOpts){
   baseOpts = baseOpts || {}
 
-  if(!baseOpts.url) throw new Error('need a url option')
+  if(!baseOpts.diggerurl) throw new Error('need a diggerurl option')
+  if(!baseOpts.routeWrapper) throw new Error('need a routeWrapper option')
+  if(!baseOpts.getParams) throw new Error('need a getParams option')
+  if(!baseOpts.mountpoint) throw new Error('need a mountpoint option')
+  if(!baseOpts.router) throw new Error('need a router option')
 
-  function getUrl(path){
-    return [baseOpts.url, path].filter(function(part){
-      return part && part.length>0
-    }).map(function(part){
-      return part.replace(/^\//, '')
-    }).join('/')
-  }
+  // the backend handlers that load the data for each route
+  var diggerHandlers = handlers({
+    diggerurl:baseOpts.diggerurl
+  })
 
-  function loadTree(opts, done){
-    opts = opts || {}
+  // the frontend routes
+  var folderRouteHandlers = routeHandlers({
+    handlers:diggerHandlers,
+    routeWrapper:baseOpts.routeWrapper,
+    getParams:baseOpts.getParams
+  })
 
-    var path = '/select/'+ opts.path + '?selector=' + encodeURIComponent('*:tree')
-    var url = getUrl(path)
+  // the route objects
+  var folderRoutes = routes({
+    idParam:baseOpts.idParam,
+    baseUrl:baseOpts.mountpoint,
+    routeHandlers:folderRouteHandlers
+  })
 
-    bhttp.get(url, {
-      decodeJSON:true
-    }, function(err, res){
-      if(err) return done(err)
-      var data = res.body || []
-      done(null, data)
-    })
-  }
-
-  function addItem(req, opts, done){
-
-    opts = opts || {}
-
-    var path = opts.id ?
-      // we are adding by id deep into a tree
-      '/item/' + opts.id :
-      // we are adding to a root node with a path
-      '/path/' + opts.path
-
-    var url = getUrl(path)
-
-    bhttp.post(url, req, {
-      decodeJSON:true
-    }, function(err, res){
-      if(err) return done(err)
-      var data = res.body
-
-      // process data
-
-      done(null, data)
-    })
-  }
-
-  return {
-    loadTree:loadTree,
-    addItem:addItem
-  }
+  router({
+    router:baseOpts.router,
+    routes:folderRoutes
+  })
 }
