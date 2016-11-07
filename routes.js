@@ -2,6 +2,7 @@ var DEFAULT_URLS = {
   tree:'/tree',
   paste:'/paste',
   children:'/children',
+  deepchildren:'/deepchildren',
   item:'/item'
 }
 
@@ -34,11 +35,25 @@ module.exports = function getRoutes(baseOpts){
       GET:routeHandlers.children
     }
   },{
-    // children
+    // children/id
     // GET /db/:project/:section/children/:id
     url:baseUrl + urls.children + '/:' + idParam,
     handlers:{
       GET:routeHandlers.children
+    }
+  },{
+    // deepchildren
+    // GET /db/:project/:section/deepchildren
+    url:baseUrl + urls.deepchildren,
+    handlers:{
+      GET:routeHandlers.deepchildren
+    }
+  },{
+    // deepchildren/id
+    // GET /db/:project/:section/deepchildren/:id
+    url:baseUrl + urls.deepchildren + '/:' + idParam,
+    handlers:{
+      GET:routeHandlers.deepchildren
     }
   },{
     // paste

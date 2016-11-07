@@ -35,10 +35,10 @@ module.exports = function getRouteHandlers(baseOpts){
   return {
     tree:getHandler('tree', handlers.loadTree),
     children:getHandler('children', handlers.loadChildren),
+    deepchildren:getHandler('deepchildren', handlers.loadDeepChildren),
     load:getHandler('load', handlers.loadItem),
     add:getHandler('add', handlers.addItem, true),
     save:getHandler('save', handlers.saveItem, true),
-    delete:getHandler('delete', handlers.deleteItem),
-    paste:getHandler('paste', handlers.pasteItems, true)
+    delete:getHandler('delete', handlers.deleteItem)
   }
 }
