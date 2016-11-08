@@ -19,9 +19,10 @@ module.exports = function handlers(baseOpts){
 
   function loadTree(opts, done){
     opts = opts || {}
-
+    
     var baseid = opts.id ? '=' + opts.id + ' ' : ''
-    var path = '/select/'+ opts.path + '?selector=' + encodeURIComponent(baseid + '*:tree')
+    var query = opts.query ? opts.query : '*'
+    var path = '/select/'+ opts.path + '?selector=' + encodeURIComponent(baseid + query + ':tree')
     var url = getUrl(path)
 
     bhttp.get(url, {
@@ -68,7 +69,7 @@ module.exports = function handlers(baseOpts){
     })
   }
 
-  function addItem(req, opts, done){
+  function addItem(opts, done){
 
     opts = opts || {}
 
@@ -80,7 +81,7 @@ module.exports = function handlers(baseOpts){
 
     var url = getUrl(path)
 
-    bhttp.post(url, req, {
+    bhttp.post(url, opts.req, {
       decodeJSON:true
     }, function(err, res){
       if(err) return done(err)
@@ -89,13 +90,13 @@ module.exports = function handlers(baseOpts){
     })
   }
 
-  function saveItem(req, opts, done){
+  function saveItem(opts, done){
 
     opts = opts || {}
 
     var url = getUrl('/item/' + opts.id)
 
-    bhttp.put(url, req, {
+    bhttp.put(url, opts.req, {
       decodeJSON:true
     }, function(err, res){
       if(err) return done(err)
