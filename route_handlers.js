@@ -1,4 +1,9 @@
 var tools = require('./tools')
+var url = require('url')
+
+function getQuery(endpoint){
+  return url.parse(endpoint, true).query
+}
 
 // generate route handlers without knowledge of where they are mounted
 module.exports = function getRouteHandlers(baseOpts){
@@ -21,14 +26,15 @@ module.exports = function getRouteHandlers(baseOpts){
       action:action
     }, function(req, res, opts){
 
-      var args = passReq ? [req] : []
-      args.push(getParams(opts.params))
-      args.push(errorWrapper(res, function(data){
+      var handlerOpts = Object.assign({}, getParams(opts.params), getQuery(req.url), {
+        req:req,
+        route:opts
+      })
+
+      handler(handlerOpts, errorWrapper(res, function(data){
         res.setHeader('Content-type', 'application/json')
         res.end(JSON.stringify(data))
       }))
-
-      handler.apply(null, args)
     })
   }
 
