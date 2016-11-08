@@ -21,8 +21,10 @@ module.exports = function handlers(baseOpts){
     opts = opts || {}
     
     var baseid = opts.id ? '=' + opts.id + ' ' : ''
-    var query = opts.query ? opts.query : '*'
-    var path = '/select/'+ opts.path + '?selector=' + encodeURIComponent(baseid + query + ':tree')
+    var selector = opts.query ? 
+      opts.query :
+      '*:tree'
+    var path = '/select/'+ opts.path + '?selector=' + encodeURIComponent(selector)
     var url = getUrl(path)
 
     bhttp.get(url, {
