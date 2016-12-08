@@ -1,6 +1,6 @@
 {
   "name": "digger-folder-ui",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "bridge between folder-ui and digger-rest",
   "main": "index.js",
   "scripts": {},
