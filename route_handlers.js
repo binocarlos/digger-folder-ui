@@ -26,6 +26,8 @@ module.exports = function getRouteHandlers(baseOpts){
       action:action
     }, function(req, res, opts){
 
+      // inject the backend id + path based on the route params
+      // also inject the query params (for example for ?query=)
       var handlerOpts = Object.assign({}, getParams(opts.params), getQuery(req.url), {
         req:req,
         route:opts
@@ -40,6 +42,7 @@ module.exports = function getRouteHandlers(baseOpts){
 
   return {
     tree:getHandler('tree', handlers.loadTree),
+    select:getHandler('select', handlers.loadSelector),
     children:getHandler('children', handlers.loadChildren),
     deepchildren:getHandler('deepchildren', handlers.loadDeepChildren),
     load:getHandler('load', handlers.loadItem),

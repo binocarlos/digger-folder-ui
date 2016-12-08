@@ -1,4 +1,5 @@
 var DEFAULT_URLS = {
+  select:'/select',
   tree:'/tree',
   paste:'/paste',
   children:'/children',
@@ -26,6 +27,13 @@ module.exports = function getRoutes(baseOpts){
     url:baseUrl + urls.tree,
     handlers:{
       GET:routeHandlers.tree
+    }
+  },{
+    // select
+    // GET /db/:project/:section/select
+    url:baseUrl + urls.select,
+    handlers:{
+      GET:routeHandlers.select
     }
   },{
     // children

@@ -19,12 +19,25 @@ module.exports = function handlers(baseOpts){
 
   function loadTree(opts, done){
     opts = opts || {}
-    
-    var baseid = opts.id ? '=' + opts.id + ' ' : ''
     var selector = opts.query ? 
       opts.query :
       '*:tree'
     var path = '/select/'+ opts.path + '?selector=' + encodeURIComponent(selector)
+    var url = getUrl(path)
+
+    bhttp.get(url, {
+      decodeJSON:true
+    }, function(err, res){
+      if(err) return done(err)
+      var data = res.body || []
+      done(null, data)
+    })
+  }
+
+  function loadSelector(opts, done){
+    opts = opts || {}
+
+    var path = '/select/'+ opts.path + '?selector=' + encodeURIComponent(opts.selector)
     var url = getUrl(path)
 
     bhttp.get(url, {
@@ -120,6 +133,7 @@ module.exports = function handlers(baseOpts){
 
   return {
     loadTree:loadTree,
+    loadSelector:loadSelector,
     loadChildren:loadChildren,
     loadDeepChildren:loadDeepChildren,
     loadItem:loadItem,
